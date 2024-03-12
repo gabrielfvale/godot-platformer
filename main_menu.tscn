@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhynsf1ywlbpy"]
+
+[ext_resource type="Theme" uid="uid://d3nx4ji1hiorn" path="res://theme.tres" id="1_5j7ru"]
+
+[node name="MainMenu" type="Node2D"]
+
+[node name="Label" type="Label" parent="."]
+offset_left = 110.0
+offset_top = 48.0
+offset_right = 206.0
+offset_bottom = 61.0
+theme = ExtResource("1_5j7ru")
+text = "Godot Platformer"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="."]
+offset_left = 120.0
+offset_top = 79.0
+offset_right = 193.0
+offset_bottom = 110.0
+theme = ExtResource("1_5j7ru")
+text = "Start"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
