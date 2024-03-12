@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://jsfl0mgk5w3h"]
+
+[ext_resource type="Script" path="res://level_1.gd" id="1_81ghx"]
+[ext_resource type="Theme" uid="uid://d3nx4ji1hiorn" path="res://theme.tres" id="1_u4cg0"]
+
+[node name="Level1" type="Node2D"]
+script = ExtResource("1_81ghx")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 42.0
+offset_bottom = 13.0
+theme = ExtResource("1_u4cg0")
+text = "Level 1"
