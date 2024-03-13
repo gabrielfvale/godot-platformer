@@ -1405,7 +1405,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_k4psx")
 }, {
-"duration": 1.0,
+"duration": 10.0,
 "texture": SubResource("AtlasTexture_7vbe4")
 }],
 "loop": false,
@@ -1433,7 +1433,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0xttb")
 }, {
-"duration": 1.0,
+"duration": 10.0,
 "texture": SubResource("AtlasTexture_rrs1d")
 }],
 "loop": false,
@@ -1512,7 +1512,7 @@ script = ExtResource("4_axi44")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
 position = Vector2(0, -3)
 sprite_frames = SubResource("SpriteFrames_qlhvt")
-animation = &"lick"
+animation = &"jump"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 position = Vector2(0, 1)
