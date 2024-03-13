@@ -1,7 +1,6 @@
-[gd_scene load_steps=31 format=3 uid="uid://jsfl0mgk5w3h"]
+[gd_scene load_steps=30 format=3 uid="uid://jsfl0mgk5w3h"]
 
 [ext_resource type="Script" path="res://level_1.gd" id="1_81ghx"]
-[ext_resource type="Theme" uid="uid://d3nx4ji1hiorn" path="res://theme.tres" id="1_u4cg0"]
 [ext_resource type="Texture2D" uid="uid://bx166spjeyvgt" path="res://assets/monochrome_tilemap_transparent.png" id="3_03utu"]
 [ext_resource type="Script" path="res://player.gd" id="4_axi44"]
 [ext_resource type="Texture2D" uid="uid://c27joju077one" path="res://assets/cat.png" id="5_tp2q5"]
@@ -1494,19 +1493,13 @@ height = 10.0
 [node name="Level1" type="Node2D"]
 script = ExtResource("1_81ghx")
 
-[node name="Label" type="Label" parent="."]
-offset_right = 42.0
-offset_bottom = 13.0
-theme = ExtResource("1_u4cg0")
-text = "Level 1"
-
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_0o5rk")
 format = 2
-layer_0/tile_data = PackedInt32Array(655378, 1048576, 16, 655377, 1048576, 16, 655376, 1048576, 16, 655375, 1048576, 16, 655374, 1048576, 16, 655373, 1048576, 16, 655372, 1048576, 16, 655371, 1048576, 16, 655370, 1048576, 16, 655369, 1048576, 16, 655368, 1048576, 16, 655367, 1048576, 16, 655366, 1048576, 16, 655365, 1048576, 16, 655364, 1048576, 16, 655363, 1048576, 16, 655362, 1048576, 16, 655361, 1048576, 16, 655360, 983040, 16, 655379, 1114112, 16, 589838, 393216, 10, 524302, 393216, 9, 524292, 262144, 2, 524293, 327680, 2, 524294, 393216, 2, 458758, 393216, 1, 458756, 262144, 1, 393221, 327680, 0, 327685, 262144, 0, 262149, 262144, 0, 196613, 262144, 0)
+layer_0/tile_data = PackedInt32Array(589838, 393216, 10, 524302, 393216, 9, 524292, 262144, 2, 524293, 327680, 2, 524294, 393216, 2, 458758, 393216, 1, 458756, 262144, 1, 393221, 327680, 0, 327685, 262144, 0, 262149, 262144, 0, 196613, 262144, 0, 524303, 1048576, 16, 524304, 1048576, 16, 524305, 1048576, 16, 655370, 1048576, 16, 655369, 1048576, 16, 655368, 1048576, 16, 655367, 1048576, 16, 655366, 1048576, 16, 655365, 1048576, 16, 655364, 1048576, 16, 655363, 1048576, 16, 655362, 1048576, 16, 655361, 1048576, 16, 655360, 1048576, 16, 655372, 1048576, 16, 655371, 1048576, 16)
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(17, 139)
+position = Vector2(6, 140)
 script = ExtResource("4_axi44")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
