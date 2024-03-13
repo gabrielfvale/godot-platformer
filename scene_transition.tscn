@@ -5,7 +5,7 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8xyl2"]
 shader = ExtResource("1_fmt7v")
-shader_parameter/progress = 0.299
+shader_parameter/progress = 0.0
 shader_parameter/diamondPixelSize = 8.0
 shader_parameter/invert = false
 
