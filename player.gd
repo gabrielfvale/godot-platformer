@@ -1,19 +1,18 @@
 extends CharacterBody2D
 
-# Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
-var window_height: float = ProjectSettings.get_setting("physics/2d/default_gravity")
+
 @export var jump_buffer_time = 0.1
 @export var move_speed = 150.0
 @export var base_velocity = -300.0
 
-var anim = "idle"
 @onready var sprite = $AnimatedSprite2D
 @onready var idle_timer = $IdleTimer
 @onready var lick_timer = $LickTimer
 
+var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
+var window_height: float = ProjectSettings.get_setting("physics/2d/default_gravity")
+var anim = "idle"
 var state = "idle"
-
 var _jump_buffer_timer: float = 0
 
 
@@ -37,6 +36,7 @@ func _on_lick_timeout():
 	#print("[LICK TIMEOUT] state: %s | anim: %s " % [state, sprite.animation])
 	if state == "lick":
 		if sprite.animation == "lick":
+			$Sfx/MeowSfx.play()
 			state = "idle"
 			lick_timer.stop()
 			idle_timer.start()
@@ -69,6 +69,7 @@ func _physics_process(delta):
 	# Handle jump.
 	if is_on_floor():
 		if Input.is_action_just_pressed("jump") or _jump_buffer_timer > 0:
+			$Sfx/JumpSfx.play()
 			velocity.y = base_velocity
 	if Input.is_action_just_released("jump"):
 		velocity.y *= 0.5
