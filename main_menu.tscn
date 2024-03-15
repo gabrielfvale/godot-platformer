@@ -7,12 +7,20 @@
 script = ExtResource("1_etnns")
 
 [node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 offset_left = 110.0
 offset_top = 48.0
 offset_right = 206.0
 offset_bottom = 61.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
 theme = ExtResource("1_5j7ru")
-text = "Godot Platformer"
+text = "eh o robson"
 horizontal_alignment = 1
 vertical_alignment = 1
 

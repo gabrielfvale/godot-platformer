@@ -12,11 +12,44 @@ var anim = "idle"
 @onready var idle_timer = $IdleTimer
 @onready var lick_timer = $LickTimer
 
+var state = "idle"
+
 var _jump_buffer_timer: float = 0
 
 
 func _ready():
 	_jump_buffer_timer = jump_buffer_time
+	idle_timer.timeout.connect(_on_idle_timeout)
+	lick_timer.timeout.connect(_on_lick_timeout)
+	sprite.animation_changed.connect(_on_animation_changed)
+
+
+func _on_idle_timeout():
+	#print("[IDLE TIMEOUT] state: %s | anim: %s " % [state, sprite.animation])
+	if state == "idle":
+		if sprite.animation == "idle":
+			state = "lick"
+			idle_timer.stop()
+			lick_timer.start()
+
+
+func _on_lick_timeout():
+	#print("[LICK TIMEOUT] state: %s | anim: %s " % [state, sprite.animation])
+	if state == "lick":
+		if sprite.animation == "lick":
+			state = "idle"
+			lick_timer.stop()
+			idle_timer.start()
+
+
+func _on_animation_changed():
+	#print("[ANIMATION CHANGED] state: %s | anim: %s " % [state, sprite.animation])
+	if sprite.animation == "idle":
+		idle_timer.start()
+	if sprite.animation != state:
+		state = "idle"
+		idle_timer.stop()
+		lick_timer.stop()
 
 
 func _input(event):
@@ -52,8 +85,7 @@ func _physics_process(delta):
 			sprite.flip_h = false
 	else:
 		velocity.x = move_toward(velocity.x, 0, move_speed)
-		
-	
+
 	if position.y > window_height - 32:
 		position.x = 6
 		position.y = 140
@@ -64,7 +96,7 @@ func _physics_process(delta):
 		anim = "fall"
 #
 	if velocity.x == 0 and velocity.y == 0:
-		anim = "idle"
+		anim = state
 
 	sprite.play(anim)
 	move_and_slide()
