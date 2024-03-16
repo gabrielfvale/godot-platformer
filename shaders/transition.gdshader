@@ -3,6 +3,7 @@ shader_type canvas_item;
 
 uniform float progress : hint_range(0, 1);
 uniform float diamondPixelSize = 10.0;
+uniform float progressScaler = 2.8;
 uniform bool invert = false;
 
 float when_lt(float x, float y) {
@@ -21,5 +22,5 @@ void fragment() {
 	if (invert) {
 		p = 1.0 - progress;
 	}
-	COLOR.a *=  when_lt(xDistance + yDistance + UV.x + UV.y, p * 4.0);
+	COLOR.a *=  when_lt(xDistance + yDistance + UV.x + UV.y, p * progressScaler);
 }

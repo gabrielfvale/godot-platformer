@@ -3,20 +3,21 @@
 [ext_resource type="Shader" path="res://shaders/transition.gdshader" id="1_fmt7v"]
 [ext_resource type="Script" path="res://scene_transition.gd" id="1_pq2p7"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8xyl2"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hxrbs"]
 shader = ExtResource("1_fmt7v")
 shader_parameter/progress = 0.0
-shader_parameter/diamondPixelSize = 8.0
-shader_parameter/invert = false
+shader_parameter/diamondPixelSize = 3.5
+shader_parameter/progressScaler = 4.0
+shader_parameter/invert = true
 
-[node name="SceneTransition" type="Node2D"]
+[node name="SceneTransition" type="Node"]
+process_mode = 3
 script = ExtResource("1_pq2p7")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="TransitionRect" type="ColorRect" parent="CanvasLayer"]
-visible = false
-material = SubResource("ShaderMaterial_8xyl2")
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_hxrbs")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
