@@ -10,13 +10,10 @@ shader_parameter/diamondPixelSize = 3.5
 shader_parameter/progressScaler = 4.0
 shader_parameter/invert = true
 
-[node name="SceneTransition" type="Node"]
-process_mode = 3
+[node name="SceneTransition" type="CanvasLayer"]
 script = ExtResource("1_pq2p7")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+[node name="TextureRect" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_hxrbs")
 anchors_preset = 15
 anchor_right = 1.0
