@@ -12,7 +12,7 @@ extends CharacterBody2D
 var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var window_height: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var anim = "idle"
-var state = "idle"
+var anim_state = anim
 var _jump_buffer_timer: float = 0
 
 
@@ -21,35 +21,6 @@ func _ready():
 	idle_timer.timeout.connect(_on_idle_timeout)
 	lick_timer.timeout.connect(_on_lick_timeout)
 	sprite.animation_changed.connect(_on_animation_changed)
-
-
-func _on_idle_timeout():
-	#print("[IDLE TIMEOUT] state: %s | anim: %s " % [state, sprite.animation])
-	if state == "idle":
-		if sprite.animation == "idle":
-			state = "lick"
-			idle_timer.stop()
-			lick_timer.start()
-
-
-func _on_lick_timeout():
-	#print("[LICK TIMEOUT] state: %s | anim: %s " % [state, sprite.animation])
-	if state == "lick":
-		if sprite.animation == "lick":
-			$Sfx/MeowSfx.play()
-			state = "idle"
-			lick_timer.stop()
-			idle_timer.start()
-
-
-func _on_animation_changed():
-	#print("[ANIMATION CHANGED] state: %s | anim: %s " % [state, sprite.animation])
-	if sprite.animation == "idle":
-		idle_timer.start()
-	if sprite.animation != state:
-		state = "idle"
-		idle_timer.stop()
-		lick_timer.stop()
 
 
 func _input(event):
@@ -62,11 +33,19 @@ func _process(delta):
 
 
 func _physics_process(delta):
-	# Add the gravity.
+	var direction = Input.get_axis("left", "right")
+	_apply_gravity(delta)
+	_handle_jump()
+	_handle_move(direction)
+	_reset_pos()
+	_update_animations(direction)
+	move_and_slide()
+
+func _apply_gravity(delta: float):
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
-	# Handle jump.
+func _handle_jump():
 	if is_on_floor():
 		if Input.is_action_just_pressed("jump") or _jump_buffer_timer > 0:
 			$Sfx/JumpSfx.play()
@@ -74,30 +53,56 @@ func _physics_process(delta):
 	if Input.is_action_just_released("jump"):
 		velocity.y *= 0.5
 
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction = Input.get_axis("left", "right")
+func _handle_move(direction: int):
 	if direction:
-		anim = "run"
 		velocity.x = direction * move_speed
-		if direction == -1:
-			sprite.flip_h = true
-		else:
-			sprite.flip_h = false
 	else:
 		velocity.x = move_toward(velocity.x, 0, move_speed)
 
+func _reset_pos():
 	if position.y > window_height - 32:
 		position.x = 6
 		position.y = 140
+
+func _update_animations(direction: int):
+	if direction:
+		anim = "run"
+		sprite.flip_h = direction == -1
+	else:
+		anim = anim_state
 
 	if velocity.y < 0:
 		anim = "jump"
 	elif velocity.y > 0:
 		anim = "fall"
-#
-	if velocity.x == 0 and velocity.y == 0:
-		anim = state
-
+	
 	sprite.play(anim)
-	move_and_slide()
+
+
+func _on_idle_timeout():
+	#print("[IDLE TIMEOUT] anim_state: %s | anim: %s " % [anim_state, sprite.animation])
+	if anim_state == "idle":
+		if sprite.animation == "idle":
+			anim_state = "lick"
+			idle_timer.stop()
+			lick_timer.start()
+
+
+func _on_lick_timeout():
+	#print("[LICK TIMEOUT] anim_state: %s | anim: %s " % [anim_state, sprite.animation])
+	if anim_state == "lick":
+		if sprite.animation == "lick":
+			$Sfx/MeowSfx.play()
+			anim_state = "idle"
+			lick_timer.stop()
+			idle_timer.start()
+
+
+func _on_animation_changed():
+	#print("[ANIMATION CHANGED] anim_state: %s | anim: %s " % [anim_state, sprite.animation])
+	if sprite.animation == "idle":
+		idle_timer.start()
+	if sprite.animation != anim_state:
+		anim_state = "idle"
+		idle_timer.stop()
+		lick_timer.stop()
