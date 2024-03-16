@@ -6,6 +6,7 @@ extends CharacterBody2D
 @export var base_velocity = -300.0
 
 @onready var sprite = $AnimatedSprite2D
+@onready var jump_buffer_timer = $JumpBufferTimer
 @onready var idle_timer = $IdleTimer
 @onready var lick_timer = $LickTimer
 
@@ -13,11 +14,10 @@ var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var window_height: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var anim = "idle"
 var anim_state = anim
-var _jump_buffer_timer: float = 0
 
 
 func _ready():
-	_jump_buffer_timer = jump_buffer_time
+	jump_buffer_timer.wait_time = jump_buffer_time
 	idle_timer.timeout.connect(_on_idle_timeout)
 	lick_timer.timeout.connect(_on_lick_timeout)
 	sprite.animation_changed.connect(_on_animation_changed)
@@ -25,11 +25,7 @@ func _ready():
 
 func _input(event):
 	if Input.is_action_just_pressed("jump"):
-		_jump_buffer_timer = jump_buffer_time
-
-
-func _process(delta):
-	_jump_buffer_timer -= delta
+		jump_buffer_timer.start()
 
 
 func _physics_process(delta):
@@ -47,7 +43,7 @@ func _apply_gravity(delta: float):
 
 func _handle_jump():
 	if is_on_floor():
-		if Input.is_action_just_pressed("jump") or _jump_buffer_timer > 0:
+		if Input.is_action_just_pressed("jump") or jump_buffer_timer.time_left > 0.0:
 			$Sfx/JumpSfx.play()
 			velocity.y = base_velocity
 	if Input.is_action_just_released("jump"):
