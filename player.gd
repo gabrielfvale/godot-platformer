@@ -1,12 +1,14 @@
 extends CharacterBody2D
 
 
-@export var jump_buffer_time = 0.1
 @export var move_speed = 150.0
 @export var base_velocity = -300.0
+@export var jump_buffer_time = 0.1
+@export var coyote_jump_time = 0.1
 
 @onready var sprite = $AnimatedSprite2D
 @onready var jump_buffer_timer = $JumpBufferTimer
+@onready var coyote_timer = $CoyoteTimer
 @onready var idle_timer = $IdleTimer
 @onready var lick_timer = $LickTimer
 
@@ -18,14 +20,10 @@ var anim_state = anim
 
 func _ready():
 	jump_buffer_timer.wait_time = jump_buffer_time
+	coyote_timer.wait_time = coyote_jump_time
 	idle_timer.timeout.connect(_on_idle_timeout)
 	lick_timer.timeout.connect(_on_lick_timeout)
 	sprite.animation_changed.connect(_on_animation_changed)
-
-
-func _input(event):
-	if Input.is_action_just_pressed("jump"):
-		jump_buffer_timer.start()
 
 
 func _physics_process(delta):
@@ -35,19 +33,27 @@ func _physics_process(delta):
 	_handle_move(direction)
 	_reset_pos()
 	_update_animations(direction)
+	var was_on_floor = is_on_floor()
 	move_and_slide()
+	var just_left_ledge = was_on_floor and not is_on_floor() and velocity.y >= 0
+	if just_left_ledge:
+		coyote_timer.start()
+		jump_buffer_timer.stop()
 
 func _apply_gravity(delta: float):
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
 func _handle_jump():
-	if is_on_floor():
+	if is_on_floor() or coyote_timer.time_left > 0.0:
 		if Input.is_action_just_pressed("jump") or jump_buffer_timer.time_left > 0.0:
 			$Sfx/JumpSfx.play()
 			velocity.y = base_velocity
-	if Input.is_action_just_released("jump"):
-		velocity.y *= 0.5
+	if not is_on_floor():
+		if Input.is_action_just_pressed("jump") and velocity.y > 0:
+			jump_buffer_timer.start()
+		if Input.is_action_just_released("jump"):
+			velocity.y *= 0.5
 
 func _handle_move(direction: int):
 	if direction:
