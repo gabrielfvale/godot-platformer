@@ -5,17 +5,25 @@ extends CharacterBody2D
 @export var base_velocity = -300.0
 @export var jump_buffer_time = 0.1
 @export var coyote_jump_time = 0.1
+@export var wall_slide_factor = 0.05
+@export var wall_slide_top_speed = 100
 
 @onready var sprite = $AnimatedSprite2D
 @onready var jump_buffer_timer = $JumpBufferTimer
 @onready var coyote_timer = $CoyoteTimer
 @onready var idle_timer = $IdleTimer
 @onready var lick_timer = $LickTimer
+@onready var action_ray = $ActionRay
+@onready var debug_label = $DebugLabel
 
-var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
+
+var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity") * 0.5
 var window_height: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var anim = "idle"
 var anim_state = anim
+
+signal started_wall_sliding
+var wall_sliding = false
 
 
 func _ready():
@@ -27,8 +35,10 @@ func _ready():
 
 
 func _physics_process(delta):
+	debug_label.text = "x_velocity %d\ny_velocity %d" % [velocity.x, velocity.y]
+	#debug_label.text = "wall_sliding %s" % wall_sliding
 	var direction = Input.get_axis("left", "right")
-	_apply_gravity(delta)
+	_apply_gravity(delta, direction)
 	_handle_jump()
 	_handle_move(direction)
 	_reset_pos()
@@ -40,9 +50,28 @@ func _physics_process(delta):
 		coyote_timer.start()
 		jump_buffer_timer.stop()
 
-func _apply_gravity(delta: float):
+
+func _apply_gravity(delta: float, direction: int):
+	var action = "right" if direction > 0 else "left"
 	if not is_on_floor():
-		velocity.y += gravity * delta
+		var gt = gravity * delta
+		if is_on_wall() and velocity.y > 0 and Input.is_action_pressed(action):
+			if not wall_sliding:
+				wall_sliding = true
+			# slowdown until top speed is reached
+			if velocity.y > wall_slide_top_speed:
+				if velocity.y - gt > wall_slide_top_speed:
+					velocity.y -= gt
+				else:
+					velocity.y = wall_slide_top_speed
+			# increase until top speed is reached
+			elif velocity.y < wall_slide_top_speed:
+				velocity.y += gt * wall_slide_factor
+		else: # not wall sliding, default gravity applied
+			velocity.y += gt
+			wall_sliding = false
+	else:
+		wall_sliding = false
 
 func _handle_jump():
 	if is_on_floor() or coyote_timer.time_left > 0.0:
@@ -70,6 +99,7 @@ func _update_animations(direction: int):
 	if direction:
 		anim = "run"
 		sprite.flip_h = direction == -1
+		action_ray.scale = Vector2(direction, 1)
 	else:
 		anim = anim_state
 
@@ -77,7 +107,10 @@ func _update_animations(direction: int):
 		anim = "jump"
 	elif velocity.y > 0:
 		anim = "fall"
-	
+
+	if wall_sliding:
+		anim = "sliding"
+
 	sprite.play(anim)
 
 
