@@ -239,6 +239,7 @@ height = 8.99997
 
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(0, -4)
+collision_layer = 2
 script = ExtResource("1_uyy5l")
 
 [node name="DebugLabel" type="Label" parent="."]
@@ -247,11 +248,6 @@ offset_top = -96.0
 offset_right = -129.0
 offset_bottom = -82.0
 theme = ExtResource("2_vvm3q")
-text = "debug"
-
-[node name="ActionRay" type="RayCast2D" parent="."]
-position = Vector2(0, -2)
-target_position = Vector2(11, 0)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -4)
@@ -265,19 +261,32 @@ shape = SubResource("CapsuleShape2D_7vcxk")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="JumpBufferTimer" type="Timer" parent="."]
+[node name="Rays" type="Marker2D" parent="."]
+position = Vector2(0, -2)
+
+[node name="ActionRay" type="RayCast2D" parent="Rays"]
+visible = false
+target_position = Vector2(15, 0)
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="JumpBufferTimer" type="Timer" parent="Timers"]
 wait_time = 0.1
 one_shot = true
 
-[node name="CoyoteTimer" type="Timer" parent="."]
+[node name="CoyoteTimer" type="Timer" parent="Timers"]
 wait_time = 0.1
 one_shot = true
 
-[node name="IdleTimer" type="Timer" parent="."]
+[node name="IdleTimer" type="Timer" parent="Timers"]
 wait_time = 6.0
 
-[node name="LickTimer" type="Timer" parent="."]
+[node name="LickTimer" type="Timer" parent="Timers"]
 wait_time = 3.5
+
+[node name="WallJumpTimer" type="Timer" parent="Timers"]
+wait_time = 0.2
+one_shot = true
 
 [node name="Sfx" type="Node" parent="."]
 

@@ -2,22 +2,29 @@ extends CharacterBody2D
 
 
 @export var move_speed = 150.0
-@export var base_velocity = -300.0
+@export var jump_velocity = -300.0
 @export var jump_buffer_time = 0.1
 @export var coyote_jump_time = 0.1
 @export var wall_slide_factor = 0.05
 @export var wall_slide_top_speed = 100
+@export var wall_jump_delay = 0.2
 
 @onready var sprite = $AnimatedSprite2D
-@onready var jump_buffer_timer = $JumpBufferTimer
-@onready var coyote_timer = $CoyoteTimer
-@onready var idle_timer = $IdleTimer
-@onready var lick_timer = $LickTimer
-@onready var action_ray = $ActionRay
+# Platforming
+@onready var jump_buffer_timer = $Timers/JumpBufferTimer
+@onready var coyote_timer = $Timers/CoyoteTimer
+@onready var wall_jump_timer = $Timers/WallJumpTimer
+# Animation timers
+@onready var idle_timer = $Timers/IdleTimer
+@onready var lick_timer = $Timers/LickTimer
+# Action rays
+@onready var ray_container = $Rays
+@onready var action_ray = $Rays/ActionRay
+
 @onready var debug_label = $DebugLabel
 
 
-var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity") * 0.5
+var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var window_height: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var anim = "idle"
 var anim_state = anim
@@ -29,17 +36,18 @@ var wall_sliding = false
 func _ready():
 	jump_buffer_timer.wait_time = jump_buffer_time
 	coyote_timer.wait_time = coyote_jump_time
+	wall_jump_timer.wait_time = wall_jump_delay
 	idle_timer.timeout.connect(_on_idle_timeout)
 	lick_timer.timeout.connect(_on_lick_timeout)
 	sprite.animation_changed.connect(_on_animation_changed)
 
 
 func _physics_process(delta):
-	debug_label.text = "x_velocity %d\ny_velocity %d" % [velocity.x, velocity.y]
-	#debug_label.text = "wall_sliding %s" % wall_sliding
+	#debug_label.text = "x_velocity %d\ny_velocity %d" % [velocity.x, velocity.y]
 	var direction = Input.get_axis("left", "right")
 	_apply_gravity(delta, direction)
 	_handle_jump()
+	_handle_wall_jump(direction)
 	_handle_move(direction)
 	_reset_pos()
 	_update_animations(direction)
@@ -77,12 +85,18 @@ func _handle_jump():
 	if is_on_floor() or coyote_timer.time_left > 0.0:
 		if Input.is_action_just_pressed("jump") or jump_buffer_timer.time_left > 0.0:
 			$Sfx/JumpSfx.play()
-			velocity.y = base_velocity
+			velocity.y = jump_velocity
 	if not is_on_floor():
 		if Input.is_action_just_pressed("jump") and velocity.y > 0:
 			jump_buffer_timer.start()
 		if Input.is_action_just_released("jump"):
 			velocity.y *= 0.5
+
+func _handle_wall_jump(direction: int):
+	if not is_on_wall_only(): return
+	if wall_jump_timer.is_stopped() and Input.is_action_just_pressed("jump"):
+		velocity.y = jump_velocity
+		wall_jump_timer.start()
 
 func _handle_move(direction: int):
 	if direction:
@@ -99,7 +113,7 @@ func _update_animations(direction: int):
 	if direction:
 		anim = "run"
 		sprite.flip_h = direction == -1
-		action_ray.scale = Vector2(direction, 1)
+		ray_container.scale = Vector2(direction, 1)
 	else:
 		anim = anim_state
 
