@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://bm5kcbex7annx"]
+[gd_scene load_steps=36 format=3 uid="uid://bm5kcbex7annx"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_uyy5l"]
 [ext_resource type="Texture2D" uid="uid://c27joju077one" path="res://assets/cat.png" id="2_mfhtf"]
@@ -237,6 +237,9 @@ animations = [{
 radius = 3.0
 height = 8.99997
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vpeho"]
+size = Vector2(7, 12)
+
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(0, -4)
 collision_layer = 2
@@ -261,12 +264,21 @@ shape = SubResource("CapsuleShape2D_7vcxk")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="Rays" type="Marker2D" parent="."]
+[node name="Action" type="Marker2D" parent="."]
 position = Vector2(0, -2)
 
-[node name="ActionRay" type="RayCast2D" parent="Rays"]
+[node name="ActionRay" type="RayCast2D" parent="Action"]
 visible = false
 target_position = Vector2(15, 0)
+collision_mask = 4
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Action"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Action/StaticBody2D"]
+position = Vector2(10, 0)
+shape = SubResource("RectangleShape2D_vpeho")
 
 [node name="Timers" type="Node" parent="."]
 

@@ -6,7 +6,7 @@ extends CharacterBody2D
 @export var jump_buffer_time = 0.1
 @export var coyote_jump_time = 0.1
 @export var wall_slide_factor = 0.05
-@export var wall_slide_top_speed = 100
+@export var wall_slide_top_speed = 80
 @export var wall_jump_delay = 0.2
 
 @onready var sprite = $AnimatedSprite2D
@@ -18,7 +18,7 @@ extends CharacterBody2D
 @onready var idle_timer = $Timers/IdleTimer
 @onready var lick_timer = $Timers/LickTimer
 # Action rays
-@onready var ray_container = $Rays
+@onready var action_container = $Action
 @onready var action_ray = $Rays/ActionRay
 
 @onready var debug_label = $DebugLabel
@@ -113,7 +113,7 @@ func _update_animations(direction: int):
 	if direction:
 		anim = "run"
 		sprite.flip_h = direction == -1
-		ray_container.scale = Vector2(direction, 1)
+		action_container.scale = Vector2(direction, 1)
 	else:
 		anim = anim_state
 
